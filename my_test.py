@@ -1,5 +1,6 @@
 import FreeCAD, FreeCADGui 
 import Part,PartGui 
+from building import *
 
 
 class My_Command_Class():
@@ -19,6 +20,9 @@ class My_Command_Class():
         l.StartPoint=(0.0,0.0,0.0)
         l.EndPoint=(1.0,1.0,1.0)
         doc.addObject("Part::Feature","Line").Shape=l.toShape() 
+
+        makeBox()
+
         doc.recompute()
         return
 
