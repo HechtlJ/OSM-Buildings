@@ -1,6 +1,6 @@
 import FreeCAD, FreeCADGui 
-import Part,PartGui 
-from building import *
+import Part, PartGui 
+from BuildingObject import *
 
 
 class My_Command_Class():
