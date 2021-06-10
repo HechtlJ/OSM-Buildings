@@ -5,7 +5,7 @@ class ScriptCmd:
        # Here your write what your ScriptCmd does...
        FreeCAD.Console.PrintMessage('Hello, World!')
    def GetResources(self): 
-       return {'Pixmap' : 'path_to_an_icon/myicon.png', 'MenuText': 'Short text', 'ToolTip': 'More detailed text'} 
+       return {'Pixmap' : 'path_to_an_icon/myicon.png', 'MenuText': 'Short text', 'ToolTip': 'Hello World button.'} 
        
 FreeCADGui.addCommand('Script_Cmd', ScriptCmd())
 
@@ -15,13 +15,19 @@ class OSM_Buildings (Workbench):
 
     MenuText = "OSM-Buildings"
     ToolTip = "A description of my workbench"
-    Icon = """paste here the contents of a 16x16 xpm icon"""
+    Icon = "paste here the contents of a 16x16 xpm icon"
 
     def Initialize(self):
         """This function is executed when FreeCAD starts"""
         #import MyModuleA, MyModuleB # import here all the needed files that create your FreeCAD commands
+        #import sys
+        #sys.path.append("C:/OSGeo4W/")
+        #print("added path")
+        #TODO: remove the lines above
+
         import my_test
-        self.list = ['Script_Cmd', 'My_Command'] # A list of command names created in the line above
+        import main_script
+        self.list = ['Script_Cmd', 'My_Command', 'MainCommand'] # A list of command names created in the line above
         self.appendToolbar("My Commands",self.list) # creates a new toolbar with your commands
         self.appendMenu("My New Menu",self.list) # creates a new menu
         self.appendMenu(["An existing Menu","My submenu"],self.list) # appends a submenu to an existing menu
