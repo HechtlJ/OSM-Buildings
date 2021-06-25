@@ -105,7 +105,34 @@ class Map:
                 y = y - ref_y
                 building.add_point(x, y)
 
-            #TODO: add address
+
+            street = ""
+            housenumber = ""
+            postcode = ""
+            city = ""
+
+            levels = 3
+
+            for tag in building_nodes[i].findall("tag"):
+                attr = tag.attrib
+                k_attr = attr.get('k')
+
+                if k_attr == "addr:street":
+                    street = attr.get('v')
+                elif k_attr == "addr:housenumber":
+                    housenumber = attr.get('v')
+                elif k_attr == "addr:postcode":
+                    postcode = attr.get('v')
+                elif k_attr == "addr:city":
+                    city = attr.get('v')
+                elif k_attr == "building:levels":
+                    levels = attr.get('v')
+
+
+            address = street + " " + housenumber + ", " + postcode + " " + city
+            building.set_address(address)
+            building.set_levels(levels)
+            
 
             self.buildings.append(building)
 
