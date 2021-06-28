@@ -1,12 +1,28 @@
+""" The code in this file is used to initialize the OSM-Buildings addon with the FreeCAD GUI."""
+
+__author__ = "Johannes Hechtl"
+__email__ = "johannes.hechtl@tum.de"
+__version__ = "1.0"
+
+
 import FreeCAD, FreeCADGui 
 
 class ScriptCmd: 
-   def Activated(self): 
-       # Here your write what your ScriptCmd does...
-       FreeCAD.Console.PrintMessage('Hello, World!')
-   def GetResources(self): 
-       return {'Pixmap' : 'path_to_an_icon/myicon.png', 'MenuText': 'Short text', 'ToolTip': 'Hello World button.'} 
+    """Example Class for a simple command."""
+    """For every in the GUI selectable command a class has to be written, with at least the two following functions:"""
+
+    def Activated(self): 
+        """ This code gets executed when the corresponding button is pressed."""
        
+        FreeCAD.Console.PrintMessage('Hello, World!')
+
+    def GetResources(self): 
+        """ Return resources for GUI"""
+        return {'Pixmap' : 'path_to_an_icon/myicon.png', 'MenuText': 'Short text', 'ToolTip': 'Hello World button.'} 
+        # Pixmap is a png icon that is the face of the button.
+        # The tooltip gets displayed when hovering over the button
+       
+# Registering the command with the GUI. This needs to be done before the Workbench is initialized
 FreeCADGui.addCommand('Script_Cmd', ScriptCmd())
 
 
@@ -20,14 +36,17 @@ class OSM_Buildings (Workbench):
     def Initialize(self):
         """This function is executed when FreeCAD starts"""
         #import MyModuleA, MyModuleB # import here all the needed files that create your FreeCAD commands
-        #import sys
-        #sys.path.append("C:/OSGeo4W/")
-        #print("added path")
-        #TODO: remove the lines above
+        
+        # if you have command classes in other files, they need to be imported EXACTLY here
 
         import my_test
         import main_script
-        self.list = ['Script_Cmd', 'My_Command', 'MainCommand'] # A list of command names created in the line above
+        import script_new_fassade
+
+        self.list = ['Script_Cmd', 'My_Command', 'MainCommand', 'NewFassade'] # A list of the command names created
+        # commands, that are not listed here, will not show up in the GUI
+
+
         self.appendToolbar("My Commands",self.list) # creates a new toolbar with your commands
         self.appendMenu("My New Menu",self.list) # creates a new menu
         self.appendMenu(["An existing Menu","My submenu"],self.list) # appends a submenu to an existing menu
@@ -51,5 +70,5 @@ class OSM_Buildings (Workbench):
         return "Gui::PythonWorkbench"
        
 
-        
+
 Gui.addWorkbench(OSM_Buildings())

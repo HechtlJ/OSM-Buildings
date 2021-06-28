@@ -1,3 +1,9 @@
+"""This Script is still work in progresss. It is the start of an implementation of a phtogrammetry algorithm."""
+
+__author__ = "Johannes Hechtl"
+__email__ = "johannes.hechtl@tum.de"
+__version__ = "0.1"
+
 from BuildingObject import makeBuilding
 from os import read
 import FreeCAD, FreeCADGui 

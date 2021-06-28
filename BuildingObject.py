@@ -1,3 +1,9 @@
+
+
+__author__ = "Johannes Hechtl"
+__email__ = "johannes.hechtl@tum.de"
+__version__ = "1.0"
+
 import FreeCAD, FreeCADGui
 from pivy import coin
 import Part, PartGui
@@ -101,6 +107,8 @@ class BuildingObject:
 
 
 class ViewProviderBuilding:
+    """Thie VIewProvider was programmed, even though it is not necessary. While is is required by FreeCAD to provide a ViewProvider,
+    it is not required to implement the graphic representation with coin."""
     def __init__(self, obj):
         '''Set this object to the proxy object of the actual view provider'''
         obj.addProperty("App::PropertyColor","Color","Box","Color of the box").Color=(1.0,0.0,0.0)
@@ -262,12 +270,112 @@ class ViewProviderBuilding:
                 Since no data were serialized nothing needs to be done here.'''
         return None
 
+class ViewProviderBox:
+	def __init__(self, obj):
+		''' Set this object to the proxy object of the actual view provider '''
+		obj.Proxy = self
+
+	def attach(self, obj):
+		''' Setup the scene sub-graph of the view provider, this method is mandatory '''
+		return
+
+	def updateData(self, fp, prop):
+		''' If a property of the handled feature has changed we have the chance to handle this here '''
+		return
+
+	def getDisplayModes(self,obj):
+		''' Return a list of display modes. '''
+		modes=[]
+		return modes
+
+	def getDefaultDisplayMode(self):
+		''' Return the name of the default display mode. It must be defined in getDisplayModes. '''
+		return "Shaded"
+
+	def setDisplayMode(self,mode):
+		''' Map the display mode defined in attach with those defined in getDisplayModes.
+		Since they have the same names nothing needs to be done. This method is optional.
+		'''
+		return mode
+
+	def onChanged(self, vp, prop):
+		''' Print the name of the property that has changed '''
+		FreeCAD.Console.PrintMessage("Change property: " + str(prop) + "\n")
+
+	def getIcon(self):
+		''' Return the icon in XMP format which will appear in the tree view. This method is optional
+		and if not defined a default icon is shown.
+		'''
+		return """
+			/* XPM */
+			static const char * ViewProviderBox_xpm[] = {
+			"16 16 6 1",
+			" 	c None",
+			".	c #141010",
+			"+	c #615BD2",
+			"@	c #C39D55",
+			"#	c #000000",
+			"$	c #57C355",
+			"        ........",
+			"   ......++..+..",
+			"   .@@@@.++..++.",
+			"   .@@@@.++..++.",
+			"   .@@  .++++++.",
+			"  ..@@  .++..++.",
+			"###@@@@ .++..++.",
+			"##$.@@$#.++++++.",
+			"#$#$.$$$........",
+			"#$$#######      ",
+			"#$$#$$$$$#      ",
+			"#$$#$$$$$#      ",
+			"#$$#$$$$$#      ",
+			" #$#$$$$$#      ",
+			"  ##$$$$$#      ",
+			"   #######      "};
+			"""
+
+	def __getstate__(self):
+		''' When saving the document this object gets stored using Python's cPickle module.
+		Since we have some un-pickable here -- the Coin stuff -- we must define this method
+		to return a tuple of all pickable objects or None.
+		'''
+		return None
+
+	def __setstate__(self,state):
+		''' When restoring the pickled object from document we have the chance to set some
+		internals here. Since no data were pickled nothing needs to be done here.
+		'''
+		return None
+
+
+class PartFeature:
+	def __init__(self, obj):
+		obj.Proxy = self
+
+class Box(PartFeature):
+	def __init__(self, obj):
+		PartFeature.__init__(self, obj)
+		''' Add some custom properties to our box feature '''
+		obj.addProperty("App::PropertyLength","Length","Box","Length of the box").Length=1.0
+		obj.addProperty("App::PropertyLength","Width","Box","Width of the box").Width=1.0
+		obj.addProperty("App::PropertyLength","Height","Box", "Height of the box").Height=1.0
+
+	def onChanged(self, fp, prop):
+		''' Print the name of the property that has changed '''
+		FreeCAD.Console.PrintMessage("Change property: " + str(prop) + "\n")
+
+	def execute(self, fp):
+		''' Print a short message when doing a recomputation, this method is mandatory '''
+		FreeCAD.Console.PrintMessage("Recompute Python Box feature\n")
+		fp.Shape = Part.makeBox(fp.Length,fp.Width,fp.Height)
+
 
 def makeBuilding(building):
     doc = FreeCAD.ActiveDocument
-    a=FreeCAD.ActiveDocument.addObject("App::FeaturePython","Building")
+    a=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","Building")
     BuildingObject(a, building)
-    ViewProviderBuilding(a.ViewObject)
+    #ViewProviderBuilding(a.ViewObject)
+    ViewProviderBox(a.ViewObject)
     doc.recompute()
 
 

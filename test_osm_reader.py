@@ -1,3 +1,6 @@
+""" Script for testing the reading of the osm file without the FreeCAD overhang"""
+
+
 import xml.etree.ElementTree as ET
 
 """
@@ -82,8 +85,8 @@ coord_node = node_dictionary['539181222']
 lat = coord_node.attrib.get("lat")
 lon = coord_node.attrib.get("lon")
 
-print(lat)
-print(lon)
+#print(lat)
+#print(lon)
 
 # library: LatLon
 
@@ -94,7 +97,7 @@ projection = Proj(proj='utm',zone=32,ellps='WGS84', preserve_units=False)
 
 x, y = projection(lat, lon)
 
-print(x, y)
+#print(x, y)
 
 from Building import Building
 
@@ -108,7 +111,17 @@ for ref in building_refs[1]:
     coord_node = node_dictionary[ref]
 
 
-print(coord_node.attrib.get("lat"))
+#print(coord_node.attrib.get("lat"))
+
+for tag in buildings[3].findall("tag"):
+    attr = tag.attrib
+    k_attr = attr.get('k')
+
+    if k_attr == "addr:street":
+        value = attr.get('v')
+        print(value)
+
+    #print(attr)
 
 
 
