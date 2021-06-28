@@ -1,6 +1,12 @@
+"""Loading and analyzing of the .osm file"""
+
+
+__author__ = "Johannes Hechtl"
+__email__ = "johannes.hechtl@tum.de"
+__version__ = "1.0"
+
+
 import xml.etree.ElementTree as ET
-#from pyproj import Proj
-#import utm
 import projection
 from Building import Building
 import FreeCAD
@@ -54,7 +60,7 @@ class Map:
 
         node_dictionary = {}
 
-
+        # make a dictionary with node ids and corresponding nodes
         for child in root:
             attr = child.attrib
             id = attr.get("id")
@@ -63,17 +69,18 @@ class Map:
 
         # in the node_dictionary the combination between a nodes id and the node itself is made
 
-
-        #print(node_dictionary['539181222'])
-
+        # placeholder for Building objects
         self.buildings = []
 
-        # Zone 32 is advised for the area around munich. If a different part of the world is looked at, the zone needs to be adjusted.
-        #projection = Proj(proj='utm',zone=32,ellps='WGS84', preserve_units=False)
-
-        # get reference x and y. The reference is just the first point in the list. a reference point is necessary to center the buildings around the 0 0 0 coordinate
+        # get reference x and y. The reference is just the first point in the list. a reference point is necessary to center the buildings around the 0 0 0 coordinate in freecad
         # this is a dirty solution, but it works
         ref = building_refs[0]
+        #FreeCAD.Console.PrintMessage(str(building_refs))
+        #FreeCAD.Console.PrintMessage("my message \n")
+        i = 0
+        while len(ref) == 0:
+            i = i+1
+            ref = building_refs[i]  # sometimes the first building is empty for some reason
         ref_node = node_dictionary[ref[0]]
         ref_lat = ref_node.attrib.get("lat")
         ref_lon = ref_node.attrib.get("lon")
@@ -83,12 +90,10 @@ class Map:
 
         ref_x, ref_y, zone_number, zone_letter = projection.from_latlon(ref_lat, ref_lon)
 
-
+        # Create a Building object and put all available data into it
         for i in range(len(building_nodes)):
             building = Building()
 
-            #msg = 'Calculating Building ' + str(i)
-            #FreeCAD.Console.PrintMessage(msg)
 
             for ref in building_refs[i]:
                 coord_node = node_dictionary[ref]
@@ -96,7 +101,6 @@ class Map:
                 lat = coord_node.attrib.get("lat")
                 lon = coord_node.attrib.get("lon")
 
-                #x, y = projection(lat, lon)
                 lat = float(lat)
                 lon = float(lon)
 
